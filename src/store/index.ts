@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { createStore, Store } from 'vuex'
+import { Commit, createStore } from 'vuex'
 
 type User = {
   id: number
@@ -24,7 +24,7 @@ interface State {
   user: User
 }
 
-export const store: Store = createStore<State>({
+export const store = createStore({
   state() {
     return {
       modal: false,
@@ -54,27 +54,27 @@ export const store: Store = createStore<State>({
     }
   },
   actions: {
-    async signup(context: Store, data: User) {
+    async signup({ commit }: { commit: Commit }, data: User): Promise<boolean> {
       const response = await axios.post('http://localhost:8080/user', data)
-      context.commit('addUser', response.data)
+      commit('addUser', response.data)
 
       return response.status === 201
     },
-    async signIn(context: Store, data: string) {
+    async signIn({ commit }: { commit: Commit }, data: string) {
       const response = await axios.get(`http://localhost:8080/user/account/${data}`)
-      context.commit('addUser', response.data)
+      commit('addUser', response.data)
 
       return response.status === 200
     },
-    async makeTransaction(context: Store, data: Transaction) {
+    async makeTransaction({ commit }: { commit: Commit }, data: Transaction) {
       const response = await axios.post('http://localhost:8080/transaction', data)
-      context.commit('addTransaction', response.data)
+      commit('addTransaction', response.data)
 
       return response.status === 201
     },
-    async getAllTransactions(context: Store, account: number) {
+    async getAllTransactions({ commit }: { commit: Commit }, account: number) {
       const response = await axios.get(`http://localhost:8080/transaction/${account}`)
-      context.commit('addTransactions', response.data)
+      commit('addTransactions', response.data)
 
       return response.status === 200
     }
